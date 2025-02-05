@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Quiz App</title>
+<style>
+body {
+  font-family: sans-serif;
+}
+#quiz-container {
+  width: 500px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  padding: 20px;
+}
+.question {
+  margin-bottom: 10px;
+}
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+#results {
+  margin-top: 20px;
+  font-weight: bold;
+}
+.correct {
+    color: green;
+}
+.incorrect {
+    color: red;
+}
+
+</style>
+</head>
+<body>
+
+<div id="quiz-container">
+  <h1>Quiz</h1>
+
+  <div id="questions">
+    </div>
+
+  <button id="submit-button">Submit Quiz</button>
+
+  <div id="results"></div>
+</div>
+
+<script>
+const quizContainer = document.getElementById('questions');
+const resultsContainer = document.getElementById('results');
+const submitButton = document.getElementById('submit-button');
+
+const quizQuestions = [
+  {
+    question: "What is the capital of France?",
+    options: ["Berlin", "Paris", "Madrid", "Rome"],
+    correctAnswer: "Paris"
+  },
+  {
+    question: "What is the highest mountain in the world?",
+    options: ["K2", "Kangchenjunga", "Mount Everest", "Lhotse"],
+    correctAnswer: "Mount Everest"
+  },
+  {
+    question: "Which planet is known as the 'Red Planet'?",
+    options: ["Jupiter", "Mars", "Venus", "Saturn"],
+    correctAnswer: "Mars"
+  }
+  // Add more questions here...
+];
+
+function buildQuiz() {
+  quizQuestions.forEach((questionData, index) => {
+    const questionDiv = document.createElement('div');
+    questionDiv.classList.add('question');
+
+    const questionText = document.createElement('h2');
+    questionText.textContent = `Q${index + 1}. ${questionData.question}`;
+    questionDiv.appendChild(questionText);
+
+    questionData.options.forEach(option => {
+      const label = document.createElement('label');
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = `question${index}`; // Important: Unique name for each question
+      input.value = option;
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(option));
+      questionDiv.appendChild(label);
+    });
+
+    quizContainer.appendChild(questionDiv);
+  });
+}
+
+
+function showResults() {
+  let numCorrect = 0;
+
+  quizQuestions.forEach((questionData, index) => {
+    const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+
+    const questionDiv = document.querySelectorAll('.question')[index]; // Get the question div
+    const labels = questionDiv.querySelectorAll('label');
+
+    if (selectedOption) {
+        const userAnswer = selectedOption.value;
+        if (userAnswer === questionData.correctAnswer) {
+            numCorrect++;
+            selectedOption.parentNode.classList.add('correct'); // Add correct class
+        } else {
+            selectedOption.parentNode.classList.add('incorrect'); // Add incorrect class
+
+            //Highlight the correct answer
+            labels.forEach(label => {
+                if (label.textContent === questionData.correctAnswer) {
+                    label.classList.add('correct');
+                }
+            });
+
+        }
+    } else {
+         // Handle case where no option is selected (optional - you can alert the user)
+        //  alert("Please answer all questions.");
+    }
+  });
+
+  resultsContainer.textContent = `You got ${numCorrect} out of ${quizQuestions.length} correct!`;
+}
+
+buildQuiz();
+
+submitButton.addEventListener('click', showResults);
+
+</script>
+
+</body>
+</html>
